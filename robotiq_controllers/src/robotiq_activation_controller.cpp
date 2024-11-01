@@ -35,8 +35,14 @@ controller_interface::InterfaceConfiguration RobotiqActivationController::comman
   controller_interface::InterfaceConfiguration config;
   config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
 
-  config.names.emplace_back("reactivate_gripper/reactivate_gripper_cmd");
-  config.names.emplace_back("reactivate_gripper/reactivate_gripper_response");
+  std::string tf_prefix = "";
+  if (!get_node()->get_parameter("tf_prefix", tf_prefix))
+  {
+    RCLCPP_WARN_STREAM(get_node()->get_logger(), "Parameter tf_prefix not found");
+  }
+
+  config.names.emplace_back(tf_prefix + "reactivate_gripper/reactivate_gripper_cmd");
+  config.names.emplace_back(tf_prefix + "reactivate_gripper/reactivate_gripper_response");
 
   return config;
 }

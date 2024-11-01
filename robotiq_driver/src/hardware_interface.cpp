@@ -185,6 +185,18 @@ std::vector<hardware_interface::CommandInterface> RobotiqGripperHardwareInterfac
 {
   RCLCPP_DEBUG(kLogger, "export_command_interfaces");
 
+  // Get tf_prefix parameter
+  const std::string param_tf_prefix = "tf_prefix";
+  std::string tf_prefix = "";
+  if (info_.hardware_parameters.find(param_tf_prefix) != info_.hardware_parameters.end())
+  {
+    tf_prefix = info_.hardware_parameters[param_tf_prefix];
+  }
+  else
+  {
+    RCLCPP_WARN_STREAM(kLogger, "Parameter tf_prefix not found");
+  }
+
   std::vector<hardware_interface::CommandInterface> command_interfaces;
 
   command_interfaces.emplace_back(hardware_interface::CommandInterface(
@@ -203,9 +215,9 @@ std::vector<hardware_interface::CommandInterface> RobotiqGripperHardwareInterfac
                        1.0;
 
   command_interfaces.emplace_back(
-      hardware_interface::CommandInterface("reactivate_gripper", "reactivate_gripper_cmd", &reactivate_gripper_cmd_));
+      hardware_interface::CommandInterface(tf_prefix + "reactivate_gripper", "reactivate_gripper_cmd", &reactivate_gripper_cmd_));
   command_interfaces.emplace_back(hardware_interface::CommandInterface(
-      "reactivate_gripper", "reactivate_gripper_response", &reactivate_gripper_response_));
+      tf_prefix + "reactivate_gripper", "reactivate_gripper_response", &reactivate_gripper_response_));
 
   return command_interfaces;
 }
